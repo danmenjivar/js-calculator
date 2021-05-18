@@ -1,3 +1,15 @@
+.calculator .screen {
+    width: 312;
+    padding: 20px;
+    text-align: end;
+    font-size: 29px;
+    font-family: 'Roboto', sans-serif;
+    font-style: bold;
+    background-color: #eee;
+    
+}
+
+
 .calculator .buttons-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;

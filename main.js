@@ -1,34 +1,120 @@
 window.addEventListener("keydown", keyInput);
 const screen = document.querySelector(".screen");
 const numberButtons = document.querySelectorAll("[data-number]");
+const operatorButton = document.querySelectorAll("[data-operator");
+const equalsButton = document.querySelector("[data-equals]");
+const percentButton = document.querySelector("[data-percent]")
+
+
+
+equalsButton.addEventListener("click", () => evaluate());
+percentButton.addEventListener("click", () => convertToPercent());
+
+var operandTriggered = false;
+var firstOp = null;
+var secondOp = null;
+var operator = null;
 
 
 numberButtons.forEach((button) =>
     button.addEventListener("click", () => appendNumber(button.textContent))
 );
 
+operatorButton.forEach(button => button.addEventListener("click", () => performOperation(convertOperator(button.textContent))));
+
 const clearButton = document.querySelector(".clear");
 clearButton.addEventListener("click", () => clearScreen());
 
+const negateButton = document.querySelector("[data-negative]");
+negateButton.addEventListener("click", () => negateScreen());
+
+
+function negateScreen() {
+    screen.textContent = -Number(screen.textContent);
+}
+
+
+function convertToPercent() {
+    num = Number(screen.textContent);
+    num /= 100;
+    screen.textContent = num.toString();
+}
+
 
 function appendNumber(num) {
-    console.log(`Clicked on ${num}`);
-    if (screen.textContent == "0") {
+    if (screen.textContent == "0" || operandTriggered) {
         screen.textContent = num;
+        operandTriggered = false;
     } else {
         screen.textContent += num;
     }
 }
 
+function performOperation(op) {
+    if (operator != null) {
+        evaluate();
+    }
+    operator = op;
+    firstOp = Number(screen.textContent)
+    operandTriggered = true;
+
+}
+
+
+function evaluate() {
+    if (firstOp !== null && !operandTriggered) {
+        secondOp = Number(screen.textContent);
+        let result = operate(firstOp, secondOp, operator);
+        console.log(`${firstOp} ${operator} ${secondOp} = ${result}`);
+        screen.textContent = result;
+        firstOp = null;
+    }
+}
+
+
 function keyInput(e) {
     const key = e.key;
     if (key >= 0 && key <= 9) {
         appendNumber(key)
+    } else if (key === "+" || key === "-" || key === "/" || key === "*") {
+        performOperation(key);
+    } else if (key === "=" || key === "Enter") {
+        evaluate();
+    } else if (key === "clear") {
+        clearScreen();
     }
 }
 
 function clearScreen() {
     screen.textContent = "0";
+    operator = null;
+    firstOp = 0;
+    secondOp = 0;
+}
+
+function convertOperator(op) {
+    let operator = "";
+    switch (op) {
+        // + 
+        case "\u002B":
+            operator = "+";
+            break;
+        // -
+        case "\u2212":
+            operator = "-";
+            break;
+        // *
+        case "\u00d7":
+            operator = "*"
+            break;
+        // Divide
+        case "\u00f7":
+            operator = "/";
+            break;
+        default:
+            break;
+    }
+    return operator;
 }
 
 
@@ -51,9 +137,7 @@ function divide(a, b) {
 }
 
 function operate(a, b, op) {
-    const result = null;
-    a = Number(a);
-    b = Number(b);
+    let result = null;
 
     switch (op) {
         case '+':
@@ -61,10 +145,13 @@ function operate(a, b, op) {
             break;
         case "-":
             result = subtract(a, b);
+            break;
         case "*":
             result = multiply(a, b);
+            break;
         case "/":
             result = (b !== 0) ? divide(a, b) : null;
+            break;
         default:
             result = null;
             console.log("In operate, this should NEVER happen!");

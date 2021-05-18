@@ -3,13 +3,15 @@ const screen = document.querySelector(".screen");
 const numberButtons = document.querySelectorAll("[data-number]");
 const operatorButton = document.querySelectorAll("[data-operator");
 const equalsButton = document.querySelector("[data-equals]");
-const percentButton = document.querySelector("[data-percent]")
+const percentButton = document.querySelector("[data-percent]");
+const decimalButton = document.querySelector("[data-decimal]");
+
 
 
 
 equalsButton.addEventListener("click", () => evaluate());
 percentButton.addEventListener("click", () => convertToPercent());
-
+decimalButton.addEventListener("click", () => decimalHandler());
 var operandTriggered = false;
 var firstOp = null;
 var secondOp = null;
@@ -40,6 +42,20 @@ function convertToPercent() {
     screen.textContent = num.toString();
 }
 
+function decimalHandler() {
+    console.table(`${firstOp} ${operator} ${secondOp}`);
+
+    if (screen.textContent == 0) {
+        screen.textContent = "0.";
+        firstOp = Number(screen.textContent);
+    } else if (screen.textContent.includes("!")) {
+        screen.textContent = "Stop that!";
+    } else if (!screen.textContent.includes(".")) {
+        screen.textContent += "."
+    }
+
+
+}
 
 function appendNumber(num) {
     if (screen.textContent == "0" || screen.textContent === "No way, Jose!" || operandTriggered) {

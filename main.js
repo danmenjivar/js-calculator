@@ -42,7 +42,7 @@ function convertToPercent() {
 
 
 function appendNumber(num) {
-    if (screen.textContent == "0" || operandTriggered) {
+    if (screen.textContent == "0" || screen.textContent === "No way, Jose!" || operandTriggered) {
         screen.textContent = num;
         operandTriggered = false;
     } else {
@@ -150,7 +150,7 @@ function operate(a, b, op) {
             result = multiply(a, b);
             break;
         case "/":
-            result = (b !== 0) ? divide(a, b) : null;
+            result = (b !== 0) ? divide(a, b) : "No way, Jose!";
             break;
         default:
             result = null;

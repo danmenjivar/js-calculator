@@ -1,92 +1,60 @@
-window.addEventListener("keydown", keyInput);
+/*
+========================================
+A Web Based Calculator
+Written By: Dan Menjivar - 2021
+========================================
+*/
+
+
+/*
+========================================
+Global Variables
+========================================
+*/
 const screen = document.querySelector(".screen");
-const numberButtons = document.querySelectorAll("[data-number]");
-const operatorButton = document.querySelectorAll("[data-operator");
-const equalsButton = document.querySelector("[data-equals]");
-const percentButton = document.querySelector("[data-percent]");
-const decimalButton = document.querySelector("[data-decimal]");
-
-
-
-
-equalsButton.addEventListener("click", () => evaluate());
-percentButton.addEventListener("click", () => convertToPercent());
-decimalButton.addEventListener("click", () => decimalHandler());
 var operandTriggered = false;
 var firstOp = null;
 var secondOp = null;
 var operator = null;
 
 
+/*
+========================================
+Event Handlers
+========================================
+*/
+
+window.addEventListener("keydown", keyInput);
+
+const numberButtons = document.querySelectorAll("[data-number]");
 numberButtons.forEach((button) =>
     button.addEventListener("click", () => appendNumber(button.textContent))
 );
 
+const operatorButton = document.querySelectorAll("[data-operator]");
 operatorButton.forEach(button => button.addEventListener("click", () => performOperation(convertOperator(button.textContent))));
 
-const clearButton = document.querySelector(".clear");
-clearButton.addEventListener("click", () => clearScreen());
+const equalsButton = document.querySelector("[data-equals]");
+equalsButton.addEventListener("click", () => evaluate());
 
 const negateButton = document.querySelector("[data-negative]");
 negateButton.addEventListener("click", () => negateScreen());
 
+const percentButton = document.querySelector("[data-percent]");
+percentButton.addEventListener("click", () => convertToPercent());
 
-function negateScreen() {
-    screen.textContent = -Number(screen.textContent);
-}
+const decimalButton = document.querySelector("[data-decimal]");
+decimalButton.addEventListener("click", () => decimalHandler());
 
-
-function convertToPercent() {
-    num = Number(screen.textContent);
-    num /= 100;
-    screen.textContent = num.toString();
-}
-
-function decimalHandler() {
-    console.table(`${firstOp} ${operator} ${secondOp}`);
-
-    if (screen.textContent == 0) {
-        screen.textContent = "0.";
-        firstOp = Number(screen.textContent);
-    } else if (screen.textContent.includes("!")) {
-        screen.textContent = "Stop that!";
-    } else if (!screen.textContent.includes(".")) {
-        screen.textContent += "."
-    }
+const clearButton = document.querySelector(".clear");
+clearButton.addEventListener("click", () => clearScreen());
 
 
-}
-
-function appendNumber(num) {
-    if (screen.textContent == "0" || screen.textContent === "No way, Jose!" || operandTriggered) {
-        screen.textContent = num;
-        operandTriggered = false;
-    } else {
-        screen.textContent += num;
-    }
-}
-
-function performOperation(op) {
-    if (operator != null) {
-        evaluate();
-    }
-    operator = op;
-    firstOp = Number(screen.textContent)
-    operandTriggered = true;
-
-}
-
-
-function evaluate() {
-    if (firstOp !== null && !operandTriggered) {
-        secondOp = Number(screen.textContent);
-        let result = operate(firstOp, secondOp, operator);
-        console.log(`${firstOp} ${operator} ${secondOp} = ${result}`);
-        screen.textContent = result;
-        firstOp = null;
-    }
-}
-
+/*
+========================================
+Helper Handler Functions for Listeners
+========================================
+*/
 
 function keyInput(e) {
     const key = e.key;
@@ -98,14 +66,9 @@ function keyInput(e) {
         evaluate();
     } else if (key === "clear") {
         clearScreen();
+    } else if (key === ".") {
+        decimalHandler();
     }
-}
-
-function clearScreen() {
-    screen.textContent = "0";
-    operator = null;
-    firstOp = 0;
-    secondOp = 0;
 }
 
 function convertOperator(op) {
@@ -133,25 +96,113 @@ function convertOperator(op) {
     return operator;
 }
 
-
-
-
-function add(a, b) {
-    return a + b;
+function negateScreen() {
+    screen.textContent = -Number(screen.textContent);
 }
 
-function subtract(a, b) {
-    return a - b;
+function convertToPercent() {
+    num = Number(screen.textContent);
+    num /= 100;
+    screen.textContent = num.toString();
 }
 
-function multiply(a, b) {
-    return a * b;
+function decimalHandler() {
+    console.table(`a: ${firstOp} op: ${operator} b: ${secondOp}`);
+
+    if (!screen.textContent.includes(".")) {
+        screen.textContent += ".";
+    }
 }
 
-function divide(a, b) {
-    return a / b;
+function appendNumber(num) {
+    console.log(`In appendNumber, textContent: ${screen.textContent}, operandTriggered: ${operandTriggered}`);
+    const screenText = screen.textContent;
+
+    if (screenText == "0." && operandTriggered) {
+        screen.textContent += num;
+        operandTriggered = false;
+    } else if (isErrorMessage(screenText) || screenText === "0" || operandTriggered) {
+        screen.textContent = num;
+        operandTriggered = false;
+    } else {
+        screen.textContent += num;
+    }
+
+
+
+    // if (isClearScreenNecessary(screen.textContent)) {
+    //     screen.textContent = num;
+    //     operandTriggered = false;
+    // } else {
+    //     screen.textContent += num;
+    // }
 }
 
+function isClearScreenNecessary(screenView) {
+    return screenView === "0" || screenView === "No way, Jose!" || (operandTriggered && !screenView.includes("."))
+}
+
+
+/*
+========================================
+Error Handling
+========================================
+*/
+
+function generateErrorMessage() {
+    const errorMsgs = ["No way, Jose!", "wtf", "u good?", "no go", "ask again later"]
+
+    return errorMsgs[Math.floor(Math.random() * errorMsgs.length)]
+}
+
+function isErrorMessage(msg) {
+    return msg === "No way, Jose!";
+}
+
+
+function performOperation(op) {
+    console.log(`In performOperation`);
+
+    if (operator != null) {
+        evaluate();
+    }
+    operator = op;
+    firstOp = Number(screen.textContent)
+    secondOp == null;
+    operandTriggered = true;
+    console.log(`In performOperation() ${firstOp} ${op} ${secondOp} ${operandTriggered}`);
+}
+
+
+
+
+function evaluate() {
+    if (firstOp !== null && !operandTriggered) {
+        secondOp = Number(screen.textContent);
+        let result = operate(firstOp, secondOp, operator);
+        console.log(`${firstOp} ${operator} ${secondOp} = ${result}`);
+        screen.textContent = result;
+        firstOp = null;
+    }
+}
+
+
+
+
+function clearScreen() {
+    screen.textContent = "0";
+    operator = null;
+    firstOp = 0;
+    secondOp = 0;
+}
+
+
+
+/*
+========================================
+Calculator Implementation
+========================================
+*/
 function operate(a, b, op) {
     let result = null;
 
@@ -176,5 +227,28 @@ function operate(a, b, op) {
 
     return result;
 }
+
+
+/*
+========================================
+Core Calculator Functions
+========================================
+*/
+function add(a, b) {
+    return a + b;
+}
+
+function subtract(a, b) {
+    return a - b;
+}
+
+function multiply(a, b) {
+    return a * b;
+}
+
+function divide(a, b) {
+    return a / b;
+}
+
 
 

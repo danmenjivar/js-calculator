@@ -16,7 +16,7 @@ var operandTriggered = false;
 var firstOp = null;
 var secondOp = null;
 var operator = null;
-const errorMsgs = ["No way, Jose!", "wtf", "u good?", "no go", "ask again later"]
+const errorMsgs = ["No way, Jose!", "wtf?", "u good?", "no go", "ask again later"]
 
 
 /*
@@ -113,7 +113,10 @@ function convertToPercent() {
 }
 
 function decimalHandler() {
-    console.table(`a: ${firstOp} op: ${operator} b: ${secondOp}`);
+    if (operandTriggered) {
+        screen.textContent = "0.";
+        operandTriggered = false;
+    }
 
     if (!screen.textContent.includes(".")) {
         screen.textContent += ".";
@@ -136,31 +139,42 @@ function backspaceHandler() {
 }
 
 function appendNumber(num) {
-    console.log(`In appendNumber, textContent: ${screen.textContent}, operandTriggered: ${operandTriggered}`);
     const screenText = screen.textContent;
 
-    if (screenText == "0." && operandTriggered) {
-        screen.textContent += num;
-        operandTriggered = false;
-    } else if (isErrorMessage(screenText) || screenText === "0" || operandTriggered) {
+    if (isErrorMessage(screenText) || screenText === "0" || operandTriggered) {
         screen.textContent = num;
         operandTriggered = false;
     } else {
         screen.textContent += num;
     }
-
-
-
-    // if (isClearScreenNecessary(screen.textContent)) {
-    //     screen.textContent = num;
-    //     operandTriggered = false;
-    // } else {
-    //     screen.textContent += num;
-    // }
 }
 
-function isClearScreenNecessary(screenView) {
-    return screenView === "0" || screenView === "No way, Jose!" || (operandTriggered && !screenView.includes("."))
+function performOperation(op) {
+    // console.log(`START of performOperation() a:${firstOp} op:${op} b:${secondOp} opTriggered?:${operandTriggered}`);
+
+    if (operator != null) {
+        console.log('performOp() called evaluate()');
+        evaluate();
+    }
+    operator = op;
+    firstOp = Number(screen.textContent)
+    secondOp == null;
+    operandTriggered = true;
+    // console.log(`END of performOperation() a:${firstOp} op:${op} b:${secondOp} opTriggered?:${operandTriggered}`);
+}
+
+function evaluate() {
+    // console.log(`START of evaluate() a:${firstOp} op:${operator} b:${secondOp} opTriggered?:${operandTriggered}`);
+
+    if (firstOp !== null && !operandTriggered) {
+        secondOp = Number(screen.textContent);
+        let result = operate(firstOp, secondOp, operator);
+        console.log(`${firstOp} ${operator} ${secondOp} = ${result}`);
+        screen.textContent = result;
+        firstOp = null;
+    }
+    // console.log(`END of evaluate() a:${firstOp} op:${operator} b:${secondOp} opTriggered?:${operandTriggered}`);
+
 }
 
 
@@ -177,34 +191,6 @@ function generateErrorMessage() {
 function isErrorMessage(msg) {
     return errorMsgs.includes(msg);
 }
-
-
-function performOperation(op) {
-    console.log(`In performOperation`);
-
-    if (operator != null) {
-        evaluate();
-    }
-    operator = op;
-    firstOp = Number(screen.textContent)
-    secondOp == null;
-    operandTriggered = true;
-    console.log(`In performOperation() ${firstOp} ${op} ${secondOp} ${operandTriggered}`);
-}
-
-
-
-
-function evaluate() {
-    if (firstOp !== null && !operandTriggered) {
-        secondOp = Number(screen.textContent);
-        let result = operate(firstOp, secondOp, operator);
-        console.log(`${firstOp} ${operator} ${secondOp} = ${result}`);
-        screen.textContent = result;
-        firstOp = null;
-    }
-}
-
 
 
 /*

@@ -54,7 +54,7 @@ a {
     font-size: 15px;
     font-weight: bolder;
     /* color: white; */
-    background-color: #86DE0B;
+    background-color: #91D7F2;
     box-shadow: 0 0 2px gray;
     height: 62px;
     width: 62px;
@@ -65,13 +65,23 @@ a {
 }
 
 [data-operator] {
-    background-color: #FFA01A;
+    background-color: #F2C12E;
+    color: white;
+    font-size: 18px;
 }
 
-[data-number] {
-    background-color: #00A3FE;
+.clear , [data-backspace] {
+    background-color: #DB441F;
+    color: white;
 }
 
-[data-equals] {
-    background-color: #FF3924;
+[data-decimal], [data-equals] {
+    background-color: #61B4AD;
+    color: white;
+    font-size: 18px;
+}
+
+[data-percent], [data-negative]  {
+    background-color: #61B4AD;
+    color: white;
 }

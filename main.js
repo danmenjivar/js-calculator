@@ -16,6 +16,7 @@ var operandTriggered = false;
 var firstOp = null;
 var secondOp = null;
 var operator = null;
+const errorMsgs = ["No way, Jose!", "wtf", "u good?", "no go", "ask again later"]
 
 
 /*
@@ -49,6 +50,9 @@ decimalButton.addEventListener("click", () => decimalHandler());
 const clearButton = document.querySelector(".clear");
 clearButton.addEventListener("click", () => clearScreen());
 
+const backspaceButton = document.querySelector("[data-backspace]");
+backspaceButton.addEventListener("click", () => backspaceHandler());
+
 
 /*
 ========================================
@@ -68,6 +72,8 @@ function keyInput(e) {
         clearScreen();
     } else if (key === ".") {
         decimalHandler();
+    } else if (key === "Backspace") {
+        backspaceHandler();
     }
 }
 
@@ -114,6 +120,21 @@ function decimalHandler() {
     }
 }
 
+function clearScreen() {
+    screen.textContent = "0";
+    operator = null;
+    firstOp = 0;
+    secondOp = 0;
+}
+
+function backspaceHandler() {
+    screen.textContent = screen.textContent.slice(0, -1);
+
+    if (screen.textContent.length === 0) {
+        screen.textContent = "0";
+    }
+}
+
 function appendNumber(num) {
     console.log(`In appendNumber, textContent: ${screen.textContent}, operandTriggered: ${operandTriggered}`);
     const screenText = screen.textContent;
@@ -150,13 +171,11 @@ Error Handling
 */
 
 function generateErrorMessage() {
-    const errorMsgs = ["No way, Jose!", "wtf", "u good?", "no go", "ask again later"]
-
     return errorMsgs[Math.floor(Math.random() * errorMsgs.length)]
 }
 
 function isErrorMessage(msg) {
-    return msg === "No way, Jose!";
+    return errorMsgs.includes(msg);
 }
 
 
@@ -188,16 +207,6 @@ function evaluate() {
 
 
 
-
-function clearScreen() {
-    screen.textContent = "0";
-    operator = null;
-    firstOp = 0;
-    secondOp = 0;
-}
-
-
-
 /*
 ========================================
 Calculator Implementation
@@ -217,7 +226,7 @@ function operate(a, b, op) {
             result = multiply(a, b);
             break;
         case "/":
-            result = (b !== 0) ? divide(a, b) : "No way, Jose!";
+            result = (b !== 0) ? divide(a, b) : generateErrorMessage();
             break;
         default:
             result = null;
